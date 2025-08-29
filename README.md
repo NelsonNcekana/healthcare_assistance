@@ -1,44 +1,43 @@
-# 🏥 Healthcare Assistant
+# Healthcare Assistant 🏥🤖
 
-AI-powered chatbot platform to support healthcare queries and patient triage.
-
----
-
-##  Overview
-
-This project is designed to assist users with common healthcare inquiries,
-provide initial triage recommendations, and serve as a learning tool for health-focused AI applications.
+[![Python](https://img.shields.io/badge/Python-3.13-blue)](https://www.python.org/)
+[![Django](https://img.shields.io/badge/Django-5.2.5-green)](https://www.djangoproject.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 ---
 
-##  Features
+## Overview
 
-- AI-based question understanding and response generation
-- Patient symptom guidance and triage suggestions
-- Future support for natural language input and direct chat interface
+**Healthcare Assistant** is a Django-based AI-powered web application designed to help users access reliable healthcare information, track symptoms, and receive medical guidance.  
 
----
-
-##  Tech Stack
-
-| Component        | Tool / Framework       |
-|------------------|------------------------|
-| Backend          | Python, (Flask or Django) |
-| AI / NLP         | OpenAI API, spaCy, scikit-learn |
-| Data Storage     | SQLite / PostgreSQL    |
-| Deployment       | Docker, Gunicorn, nginx (optional) |
+The application provides a smooth, user-friendly interface for patients and healthcare professionals, demonstrating the integration of AI, databases, and secure development practices.
 
 ---
 
-##  Setup & Usage
+## Features
 
+- ✅ User authentication (registration & login)
+- ✅ Admin dashboard for managing users and tasks
+- ✅ Symptom tracking and health tips
+- ✅ AI-powered chatbot for medical guidance
+- ✅ Secure environment management with `.env`
+- ✅ Modular and maintainable code structure
+
+---
+
+## Tech Stack
+
+- **Backend:** Python 3.13, Django 5.2.5  
+- **Database:** SQLite (development), easily switchable to PostgreSQL/MySQL  
+- **Frontend:** HTML, CSS, Bootstrap  
+- **AI Integration:** OpenAI API (for chatbot functionality)  
+- **Environment Management:** python-dotenv  
+
+---
+
+## Installation
+
+1. **Clone the repository**
 ```bash
-git clone https://github.com/SenzoN95/healthcare_assistance.git
-cd healthcare_assistance
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\\Scripts\\activate
-pip install -r requirements.txt
-
-# Run (Flask example)
-export FLASK_APP=app.py
-flask run  # Or `python app.py`
+git clone https://github.com/NelsonNcekana/healthcare_assistance.git
+cd healthcare_assist
