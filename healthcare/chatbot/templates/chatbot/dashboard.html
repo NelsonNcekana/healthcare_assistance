@@ -1,0 +1,309 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏥 Healthcare Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .dashboard-card { 
+            border-radius: 15px; 
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+            transition: transform 0.2s; 
+        }
+        .dashboard-card:hover { 
+            transform: translateY(-2px); 
+        }
+        .stat-card { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; 
+        }
+        .medication-card { 
+            border-left: 4px solid #28a745; 
+        }
+        .log-card { 
+            border-left: 4px solid #007bff; 
+        }
+        .vital-card { 
+            border-left: 4px solid #ffc107; 
+        }
+        .severity-critical { 
+            border-left-color: #dc3545; 
+        }
+        .severity-high { 
+            border-left-color: #fd7e14; 
+        }
+        .severity-medium { 
+            border-left-color: #ffc107; 
+        }
+        .severity-low { 
+            border-left-color: #28a745; 
+        }
+        .navbar-brand { 
+            font-weight: bold; 
+        }
+        .btn-floating { 
+            position: fixed; 
+            bottom: 20px; 
+            right: 20px; 
+            z-index: 1000; 
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'dashboard' %}">
+                <i class="fas fa-heartbeat me-2"></i>Healthcare Assistant
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="{% url 'chat' %}">
+                    <i class="fas fa-comments me-1"></i>Chat
+                </a>
+                <a class="nav-link active" href="{% url 'dashboard' %}">
+                    <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card dashboard-card stat-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-clipboard-list fa-2x mb-2"></i>
+                        <h4 class="card-title">{{ total_logs }}</h4>
+                        <p class="card-text">Total Health Logs</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card dashboard-card stat-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-pills fa-2x mb-2"></i>
+                        <h4 class="card-title">{{ active_meds_count }}</h4>
+                        <p class="card-text">Active Medications</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card dashboard-card stat-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+                        <h4 class="card-title">{{ critical_logs }}</h4>
+                        <p class="card-text">Critical Alerts</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card dashboard-card stat-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-calendar-day fa-2x mb-2"></i>
+                        <h4 class="card-title">{{ todays_medications.count }}</h4>
+                        <p class="card-text">Today's Medications</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                <div class="card dashboard-card">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-pills me-2"></i>Today's Medications
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        {% if todays_medications %}
+                            {% for medication in todays_medications %}
+                                <div class="card medication-card mb-3">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h6 class="card-title text-success">
+                                                    <i class="fas fa-pills me-1"></i>{{ medication.medication_name }}
+                                                </h6>
+                                                <p class="card-text mb-1">
+                                                    <strong>Dosage:</strong> {{ medication.dosage }}
+                                                </p>
+                                                <p class="card-text mb-1">
+                                                    <strong>Frequency:</strong> {{ medication.get_frequency_display }}
+                                                </p>
+                                                {% if medication.time_of_day %}
+                                                    <p class="card-text mb-1">
+                                                        <strong>Time:</strong> {{ medication.time_of_day|time:"H:i" }}
+                                                    </p>
+                                                {% endif %}
+                                                {% if medication.notes %}
+                                                    <p class="card-text text-muted">
+                                                        <small>{{ medication.notes }}</small>
+                                                    </p>
+                                                {% endif %}
+                                            </div>
+                                            <div class="text-end">
+                                                <span class="badge bg-success">Active</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-check-circle fa-3x mb-3 text-success"></i>
+                                <p>No medications scheduled for today!</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 mb-4">
+                <div class="card dashboard-card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-clipboard-list me-2"></i>Recent Health Logs
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        {% if recent_logs %}
+                            {% for log in recent_logs %}
+                                <div class="card log-card mb-3 severity-{{ log.severity }}">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h6 class="card-title">
+                                                    <i class="fas fa-sticky-note me-1"></i>{{ log.title }}
+                                                </h6>
+                                                <p class="card-text">{{ log.description|truncatewords:20 }}</p>
+                                                <div class="d-flex gap-2">
+                                                    <span class="badge bg-info">{{ log.get_log_type_display }}</span>
+                                                    <span class="badge bg-{{ log.severity }}">
+                                                        {{ log.get_severity_display }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="text-end">
+                                                <small class="text-muted">
+                                                    {{ log.date_created|date:"M d, Y" }}
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-clipboard fa-3x mb-3 text-primary"></i>
+                                <p>No health logs recorded yet.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                <div class="card dashboard-card">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0">
+                            <i class="fas fa-heartbeat me-2"></i>Recent Vital Signs
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        {% if recent_vitals %}
+                            {% for vital in recent_vitals %}
+                                <div class="card vital-card mb-3">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="card-title">
+                                                    <i class="fas fa-chart-line me-1"></i>
+                                                    {{ vital.get_vital_type_display }}
+                                                </h6>
+                                                <p class="card-text mb-0">
+                                                    <strong>{{ vital.value }} {{ vital.unit }}</strong>
+                                                </p>
+                                                {% if vital.notes %}
+                                                    <small class="text-muted">{{ vital.notes }}</small>
+                                                {% endif %}
+                                            </div>
+                                            <div class="text-end">
+                                                <small class="text-muted">
+                                                    {{ vital.date_recorded|date:"M d, Y" }}
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-heartbeat fa-3x mb-3 text-warning"></i>
+                                <p>No vital signs recorded yet.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 mb-4">
+                <div class="card dashboard-card">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-pills me-2"></i>All Active Medications
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        {% if active_medications %}
+                            {% for medication in active_medications %}
+                                <div class="card medication-card mb-3">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-success">
+                                            <i class="fas fa-pills me-1"></i>{{ medication.medication_name }}
+                                        </h6>
+                                        <p class="card-text mb-1">
+                                            <strong>Dosage:</strong> {{ medication.dosage }}
+                                        </p>
+                                        <p class="card-text mb-1">
+                                            <strong>Frequency:</strong> {{ medication.get_frequency_display }}
+                                        </p>
+                                        <p class="card-text mb-1">
+                                            <strong>Started:</strong> {{ medication.start_date|date:"M d, Y" }}
+                                        </p>
+                                        {% if medication.end_date %}
+                                            <p class="card-text mb-1">
+                                                <strong>Ends:</strong> {{ medication.end_date|date:"M d, Y" }}
+                                            </p>
+                                        {% endif %}
+                                        {% if medication.notes %}
+                                            <p class="card-text text-muted">
+                                                <small>{{ medication.notes }}</small>
+                                            </p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-pills fa-3x mb-3 text-info"></i>
+                                <p>No active medications.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a href="{% url 'chat' %}" class="btn btn-primary btn-floating rounded-circle">
+        <i class="fas fa-comments"></i>
+    </a>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

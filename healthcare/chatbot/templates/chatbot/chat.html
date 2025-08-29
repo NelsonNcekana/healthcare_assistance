@@ -1,0 +1,115 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💬 Healthcare Assistant</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f7;
+            margin: 0;
+            padding: 0;
+        }
+        .chat-container {
+            max-width: 700px;
+            margin: 50px auto;
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        .chat-box {
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        .message {
+            margin-bottom: 15px;
+        }
+        .user-message {
+            text-align: right;
+            color: #fff;
+            background: #4a90e2;
+            display: inline-block;
+            padding: 10px 15px;
+            border-radius: 20px;
+            max-width: 80%;
+        }
+        .ai-message {
+            text-align: left;
+            color: #333;
+            background: #e2e2e2;
+            display: inline-block;
+            padding: 10px 15px;
+            border-radius: 20px;
+            max-width: 80%;
+        }
+        form {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            background-color: #4a90e2;
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #357ab7;
+        }
+        .clear-btn {
+            background-color: #e74c3c;
+        }
+        .clear-btn:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+<div class="chat-container">
+    <h2>💬 Healthcare Assistant</h2>
+
+    <div class="chat-box" id="chat-box">
+        {% for message in chat_history %}
+            <div class="message {% if message.role == 'user' %}user-message{% else %}ai-message{% endif %}">
+                {{ message.content }}
+            </div>
+        {% empty %}
+            <p>Start chatting with the AI!</p>
+        {% endfor %}
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" name="question" placeholder="Type your question here..." autocomplete="off">
+        <button type="submit">Send</button>
+    </form>
+
+    <form method="POST" action="{% url 'clear_chat' %}">
+        {% csrf_token %}
+        <button type="submit" class="clear-btn">Clear Chat</button>
+    </form>
+</div>
+
+<script>
+    // Auto scroll to bottom
+    const chatBox = document.getElementById('chat-box');
+    chatBox.scrollTop = chatBox.scrollHeight;
+</script>
+</body>
+</html>
